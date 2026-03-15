@@ -1,0 +1,2369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous AI Task Management | Enterprise Workflow Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #00d4ff;
+            --primary-purple: #7b2fff;
+            --accent-cyan: #00fff0;
+            --dark-bg: #0a0a1a;
+            --darker-bg: #05050f;
+            --card-bg: rgba(20, 20, 40, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: #b4b4d4;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(123, 47, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(0, 255, 240, 0.05) 0%, transparent 50%);
+            animation: bgShift 20s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 26, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 0.5rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu li {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .nav-menu li:hover {
+            background: var(--glass-bg);
+            transform: translateY(-2px);
+        }
+
+        .nav-menu li.active {
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Page Container */
+        .page-container {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px rgba(0, 212, 255, 0.2);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 50px rgba(0, 212, 255, 0.6);
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass-border);
+        }
+
+        /* Landing Page */
+        #landing-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5)); }
+            50% { filter: drop-shadow(0 0 40px rgba(123, 47, 255, 0.8)); }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Dashboard */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 47, 255, 0.1));
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+        }
+
+        .kpi-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-blue);
+        }
+
+        .kpi-change {
+            color: #00ff88;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .chart-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            height: 400px;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 3px dashed var(--primary-blue);
+            border-radius: 16px;
+            padding: 4rem 2rem;
+            text-align: center;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 2rem;
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--primary-blue);
+        }
+
+        .upload-zone h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .supported-formats {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .format-badge {
+            background: var(--glass-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--glass-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        .success-message {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            display: none;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dataset-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+        }
+
+        .dataset-table th,
+        .dataset-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .dataset-table th {
+            background: var(--glass-bg);
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .dataset-table tr:hover {
+            background: var(--glass-bg);
+        }
+
+        /* AI Thinking Animation */
+        .ai-thinking {
+            display: none;
+            margin: 2rem 0;
+        }
+
+        .thinking-step {
+            background: var(--glass-bg);
+            border-left: 3px solid var(--primary-blue);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            opacity: 0;
+            animation: fadeInStep 0.5s ease forwards;
+        }
+
+        @keyframes fadeInStep {
+            to { opacity: 1; }
+        }
+
+        .workflow-tree {
+            margin-top: 2rem;
+        }
+
+        .workflow-module {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            margin-left: 2rem;
+        }
+
+        .workflow-task {
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 3px solid var(--primary-blue);
+            padding: 1rem;
+            margin: 0.5rem 0 0.5rem 2rem;
+            border-radius: 8px;
+        }
+
+        .workflow-subtask {
+            background: rgba(123, 47, 255, 0.05);
+            border-left: 3px solid var(--primary-purple);
+            padding: 0.8rem;
+            margin: 0.3rem 0 0.3rem 2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Employee Cards */
+        .employee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .employee-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .employee-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px rgba(0, 212, 255, 0.2);
+        }
+
+        .employee-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 3rem;
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .skill-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .skill-badge {
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .availability-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .availability-badge.available {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+        }
+
+        .availability-badge.busy {
+            background: rgba(255, 136, 0, 0.2);
+            color: #ff8800;
+            border: 1px solid #ff8800;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            padding: 1.5rem;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .chat-messages {
+            height: 500px;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .chat-message {
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message-bubble {
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .message-bubble.user {
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message-bubble.ai {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+        }
+
+        .message-sender {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 1rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            animation: typing 1.5s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chat-input-container {
+            padding: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .example-questions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .example-chip {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .example-chip:hover {
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            transform: scale(1.05);
+        }
+
+        /* Workflow Visualization */
+        .workflow-canvas-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        #workflow-canvas {
+            background: rgba(10, 10, 26, 0.5);
+            border-radius: 12px;
+            max-width: 100%;
+        }
+
+        .workflow-legend {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        /* Decision Engine */
+        .decision-timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin-top: 2rem;
+        }
+
+        .decision-timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--primary-blue), var(--primary-purple));
+        }
+
+        .decision-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            animation: slideUp 0.5s ease;
+        }
+
+        .decision-card::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 1.5rem;
+            width: 12px;
+            height: 12px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--primary-blue);
+        }
+
+        .decision-type {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .decision-type.problem {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+
+        .decision-type.solution {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .confidence-bar {
+            background: var(--glass-bg);
+            height: 8px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-cyan));
+            transition: width 1s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-menu {
+                justify-content: center;
+            }
+
+            .page-container {
+                padding: 1rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-blue), var(--primary-purple));
+            border-radius: 5px;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.9), rgba(123, 47, 255, 0.9));
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            display: none;
+            animation: slideInRight 0.5s ease;
+            max-width: 400px;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <canvas id="landing-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">⚡ AUTONOMOUS AI</div>
+        <ul class="nav-menu">
+            <li class="active" data-page="home">Home</li>
+            <li data-page="dashboard">Dashboard</li>
+            <li data-page="project">Project Analyzer</li>
+            <li data-page="dataset">Dataset Upload</li>
+            <li data-page="employees">Employees</li>
+            <li data-page="workflow">Workflow</li>
+            <li data-page="chat">AI Chat</li>
+            <li data-page="decisions">Decision Engine</li>
+        </ul>
+    </nav>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <div class="page-container">
+        <!-- HOME PAGE -->
+        <section id="home" class="page-section active">
+            <div class="hero">
+                <h1>Autonomous AI Task Management</h1>
+                <p>The world's first fully autonomous AI workflow engine for enterprise teams</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="navigateToPage('dashboard')">Launch Platform</button>
+                    <button class="btn btn-secondary" onclick="triggerDemo()">Watch Demo</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">10,000+</div>
+                    <div class="stat-label">Tasks Automated</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Teams</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Autonomous Operation</div>
+                </div>
+            </div>
+
+            <h2 style="text-align: center; font-size: 2.5rem; margin: 3rem 0; font-family: 'Orbitron', sans-serif;">Intelligent Features</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>AI Reasoning Engine</h3>
+                    <p>Advanced reasoning capabilities to analyze projects, understand goals, and generate intelligent execution plans.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Dataset Intelligence</h3>
+                    <p>Automatically analyze CSV, Excel, JSON files to extract insights and understand your team structure.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Smart Task Assignment</h3>
+                    <p>AI automatically assigns tasks to the most suitable team members based on skills, experience, and workload.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Workflow Automation</h3>
+                    <p>Break complex projects into modules, tasks, and subtasks with dependency tracking.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>AI Chat Assistant</h3>
+                    <p>Conversational AI that answers questions about your projects, teams, and workflows.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Autonomous Decisions</h3>
+                    <p>AI makes real-time decisions to optimize workflows, reassign tasks, and resolve issues.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD PAGE -->
+        <section id="dashboard" class="page-section">
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: 2.5rem; margin-bottom: 2rem;">AI Dashboard</h1>
+            
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Active Projects</div>
+                    <div class="kpi-value">24</div>
+                    <div class="kpi-change">↑ 12% this week</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Tasks Completed</div>
+                    <div class="kpi-value">1,847</div>
+                    <div class="kpi-change">↑ 23% this week</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Team Efficiency</div>
+                    <div class="kpi-value">94%</div>
+                    <div class="kpi-change">↑ 8% this week</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">AI Decisions Made</div>
+                    <div class="kpi-value">342</div>
+                    <div class="kpi-change">↑ 15% this week</div>
+                </div>
+            </div>
+
+            <div class="chart-container" style="height: 400px;">
+                <canvas id="progressChart"></canvas>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
+                <div class="chart-container" style="height: 350px;">
+                    <canvas id="taskStatusChart"></canvas>
+                </div>
+                <div class="chart-container" style="height: 350px;">
+                    <canvas id="workloadChart"></canvas>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <h3 style="margin-bottom: 1rem; font-family: 'Orbitron', sans-serif;">Real-Time Activity Feed</h3>
+                <div id="activity-feed"></div>
+            </div>
+        </section>
+
+        <!-- PROJECT ANALYZER PAGE -->
+        <section id="project" class="page-section">
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: 2.5rem; margin-bottom: 2rem;">Project Analyzer</h1>
+            
+            <div class="glass-card">
+                <h3 style="margin-bottom: 1rem;">Enter Project Description</h3>
+                <textarea id="project-input" style="width: 100%; height: 150px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1rem; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 1rem; resize: vertical;" placeholder="Describe your project... e.g., Build an AI-powered E-commerce Platform with user authentication, product catalog, shopping cart, payment integration, and admin dashboard.">Build an AI-powered E-commerce Platform with user authentication, product catalog, shopping cart, payment integration, and admin dashboard.</textarea>
+                <button class="btn btn-primary" onclick="analyzeProject()" style="margin-top: 1rem;">Analyze Project</button>
+            </div>
+
+            <div class="ai-thinking" id="ai-thinking"></div>
+            <div id="workflow-result"></div>
+        </section>
+
+        <!-- DATASET UPLOAD PAGE -->
+        <section id="dataset" class="page-section">
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: 2.5rem; margin-bottom: 2rem;">Dataset Upload & Analysis</h1>
+            
+            <label for="file-input">
+                <div class="upload-zone" id="upload-zone">
+                    <div class="upload-icon">📁</div>
+                    <h3>Drag & Drop Files Here</h3>
+                    <p style="color: var(--text-secondary); margin: 1rem 0;">or</p>
+                    <button class="btn btn-primary" type="button">Browse Files</button>
+                    <div class="supported-formats">
+                        <span class="format-badge">CSV</span>
+                        <span class="format-badge">Excel (.xlsx)</span>
+                        <span class="format-badge">JSON</span>
+                        <span class="format-badge">PDF</span>
+                        <span class="format-badge">TXT</span>
+                        <span class="format-badge">DOCX</span>
+                    </div>
+                </div>
+            </label>
+            <input type="file" id="file-input" accept=".csv,.xlsx,.json,.pdf,.txt,.docx" />
+
+            <div class="progress-bar" id="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+
+            <div class="success-message" id="success-message">
+                <h3 style="color: #00ff88; margin-bottom: 0.5rem;">✓ Dataset Uploaded Successfully!</h3>
+                <p style="color: var(--text-secondary);">AI automatically detected the dataset structure and adapted the workflow engine.</p>
+                <p id="file-info" style="margin-top: 0.5rem;"></p>
+            </div>
+
+            <div id="dataset-preview"></div>
+            <div id="dataset-analytics"></div>
+        </section>
+
+        <!-- EMPLOYEES PAGE -->
+        <section id="employees" class="page-section">
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: 2.5rem; margin-bottom: 2rem;">Employee Intelligence System</h1>
+            
+            <div id="employee-content">
+                <div class="empty-state">
+                    <div class="empty-state-icon">👥</div>
+                    <h3>No Employee Data Available</h3>
+                    <p>Upload a dataset containing employee information to see the Employee Intelligence System in action.</p>
+                    <button class="btn btn-primary" onclick="navigateToPage('dataset')" style="margin-top: 1rem;">Upload Dataset</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- WORKFLOW VISUALIZATION PAGE -->
+        <section id="workflow" class="page-section">
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: 2.5rem; margin-bottom: 2rem;">Workflow Visualization</h1>
+            
+            <div class="glass-card">
+                <button class="btn btn-primary" onclick="simulateWorkflow()">▶ Simulate Workflow Execution</button>
+            </div>
+
+            <div class="workflow-canvas-container">
+                <canvas id="workflow-canvas" width="1000" height="600"></canvas>
+                <div class="workflow-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #808080;"></div>
+                        <span>Pending</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00d4ff;"></div>
+                        <span>In Progress</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #00ff88;"></div>
+                        <span>Completed</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff4444;"></div>
+                        <span>Blocked</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI CHAT PAGE -->
+        <section id="chat" class="page-section">
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: 2.5rem; margin-bottom: 2rem;">AI Chat Assistant</h1>
+            
+            <div class="example-questions">
+                <div class="example-chip" onclick="askQuestion('Who knows Python?')">Who knows Python?</div>
+                <div class="example-chip" onclick="askQuestion('Who is available?')">Who is available?</div>
+                <div class="example-chip" onclick="askQuestion('Who has the most experience?')">Who has the most experience?</div>
+                <div class="example-chip" onclick="askQuestion('Show project status')">Show project status</div>
+                <div class="example-chip" onclick="askQuestion('Assign task to best employee')">Assign task to best employee</div>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-header">
+                    🤖 Autonomous AI Assistant
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-message">
+                        <div class="message-sender">AI Assistant</div>
+                        <div class="message-bubble ai">
+                            Hello! I'm your Autonomous AI Assistant. I can help you with project management, team analysis, and workflow optimization. How can I assist you today?
+                        </div>
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typing-indicator">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="chat-input" placeholder="Ask me anything..." onkeypress="handleChatEnter(event)">
+                    <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- DECISION ENGINE PAGE -->
+        <section id="decisions" class="page-section">
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: 2.5rem; margin-bottom: 2rem;">Decision Engine Panel</h1>
+            
+            <div class="glass-card">
+                <h3 style="margin-bottom: 1rem;">Autonomous Decision System</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">The AI continuously monitors workflows and makes intelligent decisions to optimize project execution.</p>
+                <button class="btn btn-primary" onclick="triggerDecision()">⚡ Trigger New Decision</button>
+            </div>
+
+            <div class="decision-timeline" id="decision-timeline">
+                <!-- Decisions will be added here -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Global State
+        window.appState = {
+            dataset: [],
+            columns: [],
+            datasetLoaded: false,
+            currentPage: 'home'
+        };
+
+        // Navigation
+        document.querySelectorAll('.nav-menu li').forEach(item => {
+            item.addEventListener('click', () => {
+                const page = item.getAttribute('data-page');
+                navigateToPage(page);
+            });
+        });
+
+        function navigateToPage(page) {
+            // Update nav
+            document.querySelectorAll('.nav-menu li').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-page') === page) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Update sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(page).classList.add('active');
+
+            window.appState.currentPage = page;
+
+            // Initialize page-specific content
+            if (page === 'dashboard') {
+                initDashboard();
+            } else if (page === 'workflow') {
+                drawWorkflow();
+            }
+        }
+
+        // Landing Page Particles
+        const canvas = document.getElementById('landing-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 100;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(0, 212, 255, 0.5)';
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            // Draw connections
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(123, 47, 255, ${1 - distance / 100})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Dashboard Charts
+        let progressChart, taskStatusChart, workloadChart;
+
+        function initDashboard() {
+            if (progressChart) return; // Already initialized
+
+            // Progress Chart
+            const progressCtx = document.getElementById('progressChart').getContext('2d');
+            progressChart = new Chart(progressCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+                    datasets: [{
+                        label: 'Tasks Completed',
+                        data: [45, 89, 134, 198, 256, 312],
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#ffffff' } }
+                    },
+                    scales: {
+                        y: { ticks: { color: '#b4b4d4' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                        x: { ticks: { color: '#b4b4d4' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+                    }
+                }
+            });
+
+            // Task Status Chart
+            const taskStatusCtx = document.getElementById('taskStatusChart').getContext('2d');
+            taskStatusChart = new Chart(taskStatusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'In Progress', 'Pending', 'Blocked'],
+                    datasets: [{
+                        data: [65, 20, 12, 3],
+                        backgroundColor: ['#00ff88', '#00d4ff', '#808080', '#ff4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#ffffff' } }
+                    }
+                }
+            });
+
+            // Workload Chart
+            const workloadCtx = document.getElementById('workloadChart').getContext('2d');
+            workloadChart = new Chart(workloadCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Alex', 'Sarah', 'John', 'Emma', 'Michael'],
+                    datasets: [{
+                        label: 'Tasks Assigned',
+                        data: [12, 19, 8, 15, 11],
+                        backgroundColor: 'rgba(123, 47, 255, 0.7)',
+                        borderColor: '#7b2fff',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#ffffff' } }
+                    },
+                    scales: {
+                        y: { ticks: { color: '#b4b4d4' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                        x: { ticks: { color: '#b4b4d4' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+                    }
+                }
+            });
+
+            // Activity Feed
+            const activities = [
+                { text: 'Task #147 completed by Alex', time: '2 minutes ago' },
+                { text: 'New project "Mobile App Redesign" created', time: '15 minutes ago' },
+                { text: 'AI reassigned Task #89 to Sarah', time: '1 hour ago' },
+                { text: 'Dataset "Q4_Performance.csv" uploaded', time: '2 hours ago' },
+                { text: 'Workflow optimization completed (+12% efficiency)', time: '3 hours ago' }
+            ];
+
+            const feedContainer = document.getElementById('activity-feed');
+            feedContainer.innerHTML = activities.map(activity => `
+                <div style="padding: 1rem; border-bottom: 1px solid var(--glass-border);">
+                    <div style="color: var(--text-primary);">${activity.text}</div>
+                    <div style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.3rem;">${activity.time}</div>
+                </div>
+            `).join('');
+        }
+
+        // Project Analyzer
+        function analyzeProject() {
+            const input = document.getElementById('project-input').value;
+            if (!input.trim()) {
+                showNotification('Please enter a project description');
+                return;
+            }
+
+            const thinkingDiv = document.getElementById('ai-thinking');
+            const resultDiv = document.getElementById('workflow-result');
+            
+            thinkingDiv.style.display = 'block';
+            thinkingDiv.innerHTML = '';
+            resultDiv.innerHTML = '';
+
+            const thinkingSteps = [
+                '🧠 Analyzing project requirements...',
+                '📊 Identifying key modules and components...',
+                '🔗 Detecting dependencies and relationships...',
+                '⚡ Generating optimized workflow structure...',
+                '✓ Workflow analysis complete!'
+            ];
+
+            thinkingSteps.forEach((step, index) => {
+                setTimeout(() => {
+                    const stepDiv = document.createElement('div');
+                    stepDiv.className = 'thinking-step';
+                    stepDiv.textContent = step;
+                    thinkingDiv.appendChild(stepDiv);
+
+                    if (index === thinkingSteps.length - 1) {
+                        setTimeout(() => {
+                            displayWorkflow(input);
+                        }, 500);
+                    }
+                }, index * 800);
+            });
+        }
+
+        function displayWorkflow(projectDescription) {
+            const resultDiv = document.getElementById('workflow-result');
+            
+            const workflow = {
+                modules: [
+                    {
+                        name: 'Frontend Development',
+                        tasks: [
+                            { name: 'UI Design', subtasks: ['Wireframes', 'Visual Design', 'Component Library'] },
+                            { name: 'User Authentication', subtasks: ['Login Page', 'Registration', 'Password Reset'] }
+                        ]
+                    },
+                    {
+                        name: 'Backend Development',
+                        tasks: [
+                            { name: 'API Development', subtasks: ['REST API Design', 'Authentication System', 'Database Integration'] },
+                            { name: 'Payment Integration', subtasks: ['Payment Gateway Setup', 'Transaction Processing', 'Security Implementation'] }
+                        ]
+                    },
+                    {
+                        name: 'Database & Infrastructure',
+                        tasks: [
+                            { name: 'Database Design', subtasks: ['Schema Design', 'Data Migration', 'Optimization'] },
+                            { name: 'Deployment', subtasks: ['CI/CD Pipeline', 'Server Configuration', 'Monitoring Setup'] }
+                        ]
+                    },
+                    {
+                        name: 'AI Integration',
+                        tasks: [
+                            { name: 'Recommendation System', subtasks: ['Model Training', 'API Integration', 'Performance Tuning'] },
+                            { name: 'Analytics Dashboard', subtasks: ['Data Visualization', 'Real-time Metrics', 'Reporting'] }
+                        ]
+                    }
+                ]
+            };
+
+            let html = '<div class="glass-card"><h2 style="font-family: Orbitron, sans-serif; margin-bottom: 1rem;">Generated Workflow</h2>';
+            html += '<p style="color: var(--text-secondary); margin-bottom: 2rem;">AI has analyzed your project and generated the following optimized workflow structure:</p>';
+            html += '<div class="workflow-tree">';
+
+            workflow.modules.forEach((module, mIndex) => {
+                html += `<div class="workflow-module" style="animation-delay: ${mIndex * 0.1}s;">`;
+                html += `<h3 style="color: var(--primary-blue); font-size: 1.3rem; margin-bottom: 1rem;">📦 ${module.name}</h3>`;
+                
+                module.tasks.forEach((task, tIndex) => {
+                    html += `<div class="workflow-task" style="animation-delay: ${(mIndex * 0.1) + (tIndex * 0.05)}s;">`;
+                    html += `<strong>✓ ${task.name}</strong>`;
+                    
+                    task.subtasks.forEach((subtask, sIndex) => {
+                        html += `<div class="workflow-subtask" style="animation-delay: ${(mIndex * 0.1) + (tIndex * 0.05) + (sIndex * 0.02)}s;">`;
+                        html += `• ${subtask}`;
+                        html += `</div>`;
+                    });
+                    
+                    html += `</div>`;
+                });
+                
+                html += `</div>`;
+            });
+
+            html += '</div>';
+            html += '<div style="margin-top: 2rem; padding: 1.5rem; background: rgba(0, 255, 136, 0.1); border: 1px solid #00ff88; border-radius: 12px;">';
+            html += '<strong style="color: #00ff88;">⏱ Estimated Timeline:</strong> 8-12 weeks<br>';
+            html += '<strong style="color: #00ff88;">👥 Recommended Team Size:</strong> 5-7 members<br>';
+            html += '<strong style="color: #00ff88;">🎯 Critical Path:</strong> Backend Development → Frontend Development → AI Integration';
+            html += '</div>';
+            html += '</div>';
+
+            resultDiv.innerHTML = html;
+        }
+
+        // Dataset Upload System
+        const uploadZone = document.getElementById('upload-zone');
+        const fileInput = document.getElementById('file-input');
+        const progressBar = document.getElementById('progress-bar');
+        const progressFill = document.getElementById('progress-fill');
+        const successMessage = document.getElementById('success-message');
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Highlight drop zone
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadZone.addEventListener(eventName, () => {
+                uploadZone.classList.add('dragover');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadZone.addEventListener(eventName, () => {
+                uploadZone.classList.remove('dragover');
+            }, false);
+        });
+
+        // Handle drop
+        uploadZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        }, false);
+
+        // Handle file input change
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            progressBar.style.display = 'block';
+            successMessage.style.display = 'none';
+
+            // Simulate upload progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        processFile(file);
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        function processFile(file) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const content = e.target.result;
+
+                if (file.name.endsWith('.csv')) {
+                    parseCSV(content, file);
+                } else if (file.name.endsWith('.json')) {
+                    parseJSON(content, file);
+                } else {
+                    showNotification('Currently supporting CSV and JSON files for full parsing');
+                    displayBasicFileInfo(file);
+                }
+            };
+
+            if (file.name.endsWith('.csv') || file.name.endsWith('.json') || file.name.endsWith('.txt')) {
+                reader.readAsText(file);
+            } else {
+                displayBasicFileInfo(file);
+            }
+        }
+
+        function normalizeColumnName(col) {
+            return col.toLowerCase().trim().replace(/\s+/g, '_');
+        }
+
+        function parseCSV(content, file) {
+            const lines = content.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            const normalizedHeaders = headers.map(normalizeColumnName);
+
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim());
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index];
+                    row[normalizedHeaders[index]] = values[index];
+                });
+                data.push(row);
+            }
+
+            window.appState.dataset = data;
+            window.appState.columns = headers;
+            window.appState.datasetLoaded = true;
+
+            displayDatasetSuccess(file, data, headers);
+        }
+
+        function parseJSON(content, file) {
+            try {
+                const data = JSON.parse(content);
+                const dataArray = Array.isArray(data) ? data : [data];
+                
+                if (dataArray.length > 0) {
+                    const headers = Object.keys(dataArray[0]);
+                    const normalizedHeaders = headers.map(normalizeColumnName);
+
+                    // Add normalized keys
+                    dataArray.forEach(row => {
+                        headers.forEach(header => {
+                            const normalized = normalizeColumnName(header);
+                            if (normalized !== header) {
+                                row[normalized] = row[header];
+                            }
+                        });
+                    });
+
+                    window.appState.dataset = dataArray;
+                    window.appState.columns = headers;
+                    window.appState.datasetLoaded = true;
+
+                    displayDatasetSuccess(file, dataArray, headers);
+                }
+            } catch (error) {
+                showNotification('Error parsing JSON file');
+            }
+        }
+
+        function displayBasicFileInfo(file) {
+            successMessage.style.display = 'block';
+            document.getElementById('file-info').innerHTML = `
+                <strong>File:</strong> ${file.name}<br>
+                <strong>Size:</strong> ${(file.size / 1024).toFixed(2)} KB<br>
+                <strong>Type:</strong> ${file.type || 'Unknown'}
+            `;
+            progressBar.style.display = 'none';
+        }
+
+        function displayDatasetSuccess(file, data, headers) {
+            successMessage.style.display = 'block';
+            document.getElementById('file-info').innerHTML = `
+                <strong>File:</strong> ${file.name}<br>
+                <strong>Size:</strong> ${(file.size / 1024).toFixed(2)} KB<br>
+                <strong>Rows:</strong> ${data.length}<br>
+                <strong>Columns:</strong> ${headers.length}
+            `;
+
+            showNotification('✓ Dataset uploaded and analyzed successfully!');
+
+            // Display table preview
+            displayDatasetTable(data, headers);
+
+            // Display analytics
+            displayDatasetAnalytics(data, headers);
+
+            // Update employees page
+            updateEmployeesPage(data);
+
+            progressBar.style.display = 'none';
+        }
+
+        function displayDatasetTable(data, headers) {
+            const previewDiv = document.getElementById('dataset-preview');
+            
+            let html = '<div class="glass-card"><h3 style="margin-bottom: 1rem;">Dataset Preview</h3>';
+            html += '<div style="overflow-x: auto;"><table class="dataset-table">';
+            html += '<thead><tr>';
+            headers.forEach(header => {
+                html += `<th>${header}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            const previewCount = Math.min(data.length, 10);
+            for (let i = 0; i < previewCount; i++) {
+                html += '<tr>';
+                headers.forEach(header => {
+                    html += `<td>${data[i][header] || ''}</td>`;
+                });
+                html += '</tr>';
+            }
+
+            html += '</tbody></table></div>';
+            if (data.length > 10) {
+                html += `<p style="margin-top: 1rem; color: var(--text-secondary);">Showing 10 of ${data.length} rows</p>`;
+            }
+            html += '</div>';
+
+            previewDiv.innerHTML = html;
+        }
+
+        function displayDatasetAnalytics(data, headers) {
+            const analyticsDiv = document.getElementById('dataset-analytics');
+            
+            let html = '<div class="glass-card"><h3 style="margin-bottom: 1rem;">AI-Generated Insights</h3>';
+            
+            // Detect dataset type
+            const hasEmployeeColumns = headers.some(h => 
+                normalizeColumnName(h).includes('name') || 
+                normalizeColumnName(h).includes('employee') ||
+                normalizeColumnName(h).includes('skill')
+            );
+
+            if (hasEmployeeColumns) {
+                html += '<p style="color: #00ff88; margin-bottom: 1rem;">✓ Employee dataset detected</p>';
+                
+                // Find skill column
+                const skillColumn = headers.find(h => 
+                    normalizeColumnName(h).includes('skill')
+                );
+                
+                if (skillColumn) {
+                    const skills = {};
+                    data.forEach(row => {
+                        const skill = row[skillColumn];
+                        if (skill) {
+                            skills[skill] = (skills[skill] || 0) + 1;
+                        }
+                    });
+
+                    html += '<h4 style="margin-top: 1rem; margin-bottom: 0.5rem;">Skill Distribution</h4>';
+                    Object.entries(skills).forEach(([skill, count]) => {
+                        const percentage = (count / data.length * 100).toFixed(1);
+                        html += `<div style="margin: 0.5rem 0;">`;
+                        html += `<div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">`;
+                        html += `<span>${skill}</span><span>${count} (${percentage}%)</span>`;
+                        html += `</div>`;
+                        html += `<div style="background: var(--glass-bg); height: 8px; border-radius: 8px; overflow: hidden;">`;
+                        html += `<div style="background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple)); height: 100%; width: ${percentage}%;"></div>`;
+                        html += `</div></div>`;
+                    });
+                }
+
+                // Find availability column
+                const availabilityColumn = headers.find(h => 
+                    normalizeColumnName(h).includes('availability') ||
+                    normalizeColumnName(h).includes('status')
+                );
+
+                if (availabilityColumn) {
+                    const available = data.filter(row => 
+                        normalizeColumnName(row[availabilityColumn]).includes('available')
+                    ).length;
+                    const busy = data.length - available;
+
+                    html += '<h4 style="margin-top: 2rem; margin-bottom: 0.5rem;">Availability Status</h4>';
+                    html += `<p style="color: #00ff88;">Available: ${available} (${(available/data.length*100).toFixed(1)}%)</p>`;
+                    html += `<p style="color: #ff8800;">Busy: ${busy} (${(busy/data.length*100).toFixed(1)}%)</p>`;
+                }
+            } else {
+                html += '<p>Dataset structure analyzed. Ready for workflow integration.</p>';
+            }
+
+            html += '</div>';
+            analyticsDiv.innerHTML = html;
+        }
+
+        function updateEmployeesPage(data) {
+            const employeeContent = document.getElementById('employee-content');
+            
+            // Try to find employee-related columns
+            const nameColumn = window.appState.columns.find(col => 
+                normalizeColumnName(col).includes('name') || 
+                normalizeColumnName(col).includes('employee')
+            );
+
+            if (!nameColumn) {
+                employeeContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <h3>No Employee Column Detected</h3>
+                        <p>The uploaded dataset does not appear to contain employee information.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const skillColumn = window.appState.columns.find(col => 
+                normalizeColumnName(col).includes('skill')
+            );
+
+            const experienceColumn = window.appState.columns.find(col => 
+                normalizeColumnName(col).includes('experience')
+            );
+
+            const availabilityColumn = window.appState.columns.find(col => 
+                normalizeColumnName(col).includes('availability') ||
+                normalizeColumnName(col).includes('status')
+            );
+
+            let html = '<div class="employee-grid">';
+
+            data.forEach(employee => {
+                const name = employee[nameColumn];
+                const skills = skillColumn ? employee[skillColumn] : 'N/A';
+                const experience = experienceColumn ? employee[experienceColumn] : 'N/A';
+                const availability = availabilityColumn ? employee[availabilityColumn] : 'Unknown';
+                
+                const initials = name ? name.split(' ').map(n => n[0]).join('').toUpperCase() : '?';
+                const isAvailable = normalizeColumnName(availability).includes('available');
+
+                html += `<div class="employee-card">`;
+                html += `<div class="employee-avatar">${initials}</div>`;
+                html += `<h3>${name}</h3>`;
+                
+                if (skills !== 'N/A') {
+                    html += `<div class="skill-badges">`;
+                    skills.split(',').forEach(skill => {
+                        html += `<span class="skill-badge">${skill.trim()}</span>`;
+                    });
+                    html += `</div>`;
+                }
+
+                if (experience !== 'N/A') {
+                    html += `<p style="margin-top: 1rem; color: var(--text-secondary);">Experience: ${experience} years</p>`;
+                }
+
+                html += `<span class="availability-badge ${isAvailable ? 'available' : 'busy'}">${availability}</span>`;
+                html += `</div>`;
+            });
+
+            html += '</div>';
+
+            // Add charts
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-top: 3rem;">';
+            html += '<div class="chart-container" style="height: 350px;"><canvas id="employeeSkillChart"></canvas></div>';
+            html += '<div class="chart-container" style="height: 350px;"><canvas id="employeeExpChart"></canvas></div>';
+            html += '</div>';
+
+            employeeContent.innerHTML = html;
+
+            // Create charts
+            if (skillColumn) {
+                const skills = {};
+                data.forEach(row => {
+                    const skill = row[skillColumn];
+                    if (skill) {
+                        skills[skill] = (skills[skill] || 0) + 1;
+                    }
+                });
+
+                const skillChartCtx = document.getElementById('employeeSkillChart').getContext('2d');
+                new Chart(skillChartCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(skills),
+                        datasets: [{
+                            data: Object.values(skills),
+                            backgroundColor: ['#00d4ff', '#7b2fff', '#00fff0', '#ff8800', '#00ff88']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Skill Distribution',
+                                color: '#ffffff',
+                                font: { size: 16 }
+                            },
+                            legend: { labels: { color: '#ffffff' } }
+                        }
+                    }
+                });
+            }
+
+            if (experienceColumn) {
+                const expChartCtx = document.getElementById('employeeExpChart').getContext('2d');
+                new Chart(expChartCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.map(emp => emp[nameColumn]),
+                        datasets: [{
+                            label: 'Years of Experience',
+                            data: data.map(emp => parseFloat(emp[experienceColumn]) || 0),
+                            backgroundColor: 'rgba(123, 47, 255, 0.7)',
+                            borderColor: '#7b2fff',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Employee Experience',
+                                color: '#ffffff',
+                                font: { size: 16 }
+                            },
+                            legend: { labels: { color: '#ffffff' } }
+                        },
+                        scales: {
+                            y: { ticks: { color: '#b4b4d4' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                            x: { ticks: { color: '#b4b4d4' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Workflow Visualization
+        function drawWorkflow() {
+            const canvas = document.getElementById('workflow-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const nodes = [
+                { id: 1, x: 200, y: 100, label: 'Project Init', status: 'completed' },
+                { id: 2, x: 400, y: 100, label: 'Requirements', status: 'completed' },
+                { id: 3, x: 600, y: 100, label: 'Design', status: 'in-progress' },
+                { id: 4, x: 800, y: 100, label: 'Development', status: 'pending' },
+                { id: 5, x: 400, y: 250, label: 'Frontend', status: 'pending' },
+                { id: 6, x: 600, y: 250, label: 'Backend', status: 'pending' },
+                { id: 7, x: 500, y: 400, label: 'Testing', status: 'pending' },
+                { id: 8, x: 700, y: 400, label: 'Deployment', status: 'pending' }
+            ];
+
+            const edges = [
+                [1, 2], [2, 3], [3, 4], [3, 5], [3, 6], [5, 7], [6, 7], [7, 8]
+            ];
+
+            // Draw edges
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.3)';
+            ctx.lineWidth = 2;
+            edges.forEach(([from, to]) => {
+                const fromNode = nodes.find(n => n.id === from);
+                const toNode = nodes.find(n => n.id === to);
+                
+                ctx.beginPath();
+                ctx.moveTo(fromNode.x, fromNode.y);
+                ctx.lineTo(toNode.x, toNode.y);
+                ctx.stroke();
+            });
+
+            // Draw nodes
+            nodes.forEach(node => {
+                let color;
+                switch(node.status) {
+                    case 'completed': color = '#00ff88'; break;
+                    case 'in-progress': color = '#00d4ff'; break;
+                    case 'pending': color = '#808080'; break;
+                    case 'blocked': color = '#ff4444'; break;
+                    default: color = '#808080';
+                }
+
+                // Draw circle
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 30, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw label
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '12px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(node.label, node.x, node.y + 50);
+            });
+        }
+
+        function simulateWorkflow() {
+            showNotification('⚡ Starting workflow simulation...');
+            
+            const canvas = document.getElementById('workflow-canvas');
+            const ctx = canvas.getContext('2d');
+
+            const nodes = [
+                { id: 1, x: 200, y: 100, label: 'Project Init', status: 'pending' },
+                { id: 2, x: 400, y: 100, label: 'Requirements', status: 'pending' },
+                { id: 3, x: 600, y: 100, label: 'Design', status: 'pending' },
+                { id: 4, x: 800, y: 100, label: 'Development', status: 'pending' },
+                { id: 5, x: 400, y: 250, label: 'Frontend', status: 'pending' },
+                { id: 6, x: 600, y: 250, label: 'Backend', status: 'pending' },
+                { id: 7, x: 500, y: 400, label: 'Testing', status: 'pending' },
+                { id: 8, x: 700, y: 400, label: 'Deployment', status: 'pending' }
+            ];
+
+            let currentNode = 0;
+
+            const interval = setInterval(() => {
+                if (currentNode > 0) {
+                    nodes[currentNode - 1].status = 'completed';
+                }
+
+                if (currentNode < nodes.length) {
+                    nodes[currentNode].status = 'in-progress';
+                    currentNode++;
+                    
+                    // Redraw
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    const edges = [
+                        [1, 2], [2, 3], [3, 4], [3, 5], [3, 6], [5, 7], [6, 7], [7, 8]
+                    ];
+
+                    ctx.strokeStyle = 'rgba(0, 212, 255, 0.3)';
+                    ctx.lineWidth = 2;
+                    edges.forEach(([from, to]) => {
+                        const fromNode = nodes.find(n => n.id === from);
+                        const toNode = nodes.find(n => n.id === to);
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(fromNode.x, fromNode.y);
+                        ctx.lineTo(toNode.x, toNode.y);
+                        ctx.stroke();
+                    });
+
+                    nodes.forEach(node => {
+                        let color;
+                        switch(node.status) {
+                            case 'completed': color = '#00ff88'; break;
+                            case 'in-progress': color = '#00d4ff'; break;
+                            case 'pending': color = '#808080'; break;
+                            default: color = '#808080';
+                        }
+
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, 30, 0, Math.PI * 2);
+                        ctx.fillStyle = color;
+                        ctx.fill();
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = '12px Inter';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(node.label, node.x, node.y + 50);
+                    });
+                } else {
+                    clearInterval(interval);
+                    nodes[nodes.length - 1].status = 'completed';
+                    showNotification('✓ Workflow simulation completed!');
+                }
+            }, 1000);
+        }
+
+        // Chat System
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            addChatMessage(message, 'user');
+            input.value = '';
+
+            // Show typing indicator
+            document.getElementById('typing-indicator').style.display = 'block';
+
+            setTimeout(() => {
+                document.getElementById('typing-indicator').style.display = 'none';
+                const response = generateChatResponse(message);
+                addChatMessage(response, 'ai');
+            }, 1500);
+        }
+
+        function askQuestion(question) {
+            document.getElementById('chat-input').value = question;
+            sendChatMessage();
+        }
+
+        function handleChatEnter(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function addChatMessage(text, sender) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message';
+            
+            const senderLabel = sender === 'user' ? 'You' : 'AI Assistant';
+            messageDiv.innerHTML = `
+                <div class="message-sender">${senderLabel}</div>
+                <div class="message-bubble ${sender}">${text}</div>
+            `;
+
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function generateChatResponse(question) {
+            const lowerQuestion = question.toLowerCase();
+
+            // Check if dataset is loaded
+            if (!window.appState.datasetLoaded) {
+                if (lowerQuestion.includes('who') || lowerQuestion.includes('employee')) {
+                    return "I don't have any employee data loaded yet. Please upload a dataset containing employee information first, and I'll be able to answer your questions based on that data.";
+                }
+            } else {
+                // Query dataset
+                const dataset = window.appState.dataset;
+
+                // Find name column
+                const nameColumn = window.appState.columns.find(col => 
+                    normalizeColumnName(col).includes('name') || 
+                    normalizeColumnName(col).includes('employee')
+                );
+
+                const skillColumn = window.appState.columns.find(col => 
+                    normalizeColumnName(col).includes('skill')
+                );
+
+                const experienceColumn = window.appState.columns.find(col => 
+                    normalizeColumnName(col).includes('experience')
+                );
+
+                const availabilityColumn = window.appState.columns.find(col => 
+                    normalizeColumnName(col).includes('availability') ||
+                    normalizeColumnName(col).includes('status')
+                );
+
+                // Who knows Python?
+                if (lowerQuestion.includes('python') && skillColumn) {
+                    const pythonExperts = dataset.filter(emp => 
+                        emp[skillColumn] && normalizeColumnName(emp[skillColumn]).includes('python')
+                    );
+
+                    if (pythonExperts.length > 0) {
+                        const names = pythonExperts.map(emp => emp[nameColumn]).join(', ');
+                        const available = pythonExperts.filter(emp => 
+                            availabilityColumn && normalizeColumnName(emp[availabilityColumn]).includes('available')
+                        );
+
+                        let response = `I found ${pythonExperts.length} employee(s) with Python skills: ${names}.`;
+                        if (available.length > 0) {
+                            response += ` Among them, ${available.map(emp => emp[nameColumn]).join(', ')} ${available.length === 1 ? 'is' : 'are'} currently available.`;
+                        }
+                        return response;
+                    } else {
+                        return "I couldn't find any employees with Python skills in the current dataset.";
+                    }
+                }
+
+                // Who is available?
+                if (lowerQuestion.includes('available') || lowerQuestion.includes('free')) {
+                    if (availabilityColumn) {
+                        const available = dataset.filter(emp => 
+                            normalizeColumnName(emp[availabilityColumn]).includes('available')
+                        );
+
+                        if (available.length > 0) {
+                            const names = available.map(emp => emp[nameColumn]).join(', ');
+                            return `Currently ${available.length} employee(s) are available: ${names}. They can be assigned to new tasks right away.`;
+                        } else {
+                            return "All employees are currently busy. The AI can help you optimize workload distribution if needed.";
+                        }
+                    }
+                }
+
+                // Who has most experience?
+                if (lowerQuestion.includes('experience') || lowerQuestion.includes('most experienced')) {
+                    if (experienceColumn && nameColumn) {
+                        let maxExp = -1;
+                        let mostExperienced = null;
+
+                        dataset.forEach(emp => {
+                            const exp = parseFloat(emp[experienceColumn]) || 0;
+                            if (exp > maxExp) {
+                                maxExp = exp;
+                                mostExperienced = emp;
+                            }
+                        });
+
+                        if (mostExperienced) {
+                            return `${mostExperienced[nameColumn]} has the most experience with ${maxExp} years. They would be ideal for leading complex projects or mentoring junior team members.`;
+                        }
+                    }
+                }
+
+                // Generic employee query
+                if (lowerQuestion.includes('who') && nameColumn) {
+                    return `I can see ${dataset.length} employee(s) in the dataset. What specific information would you like to know about them? I can tell you about their skills, experience, or availability.`;
+                }
+            }
+
+            // Project status
+            if (lowerQuestion.includes('project') && lowerQuestion.includes('status')) {
+                return "Based on the current dashboard, you have 24 active projects with a 94% team efficiency rate. 1,847 tasks have been completed this week, showing a 23% increase. The AI has made 342 autonomous decisions to optimize workflows.";
+            }
+
+            // Assign task
+            if (lowerQuestion.includes('assign') || lowerQuestion.includes('recommendation')) {
+                if (window.appState.datasetLoaded && window.appState.dataset.length > 0) {
+                    const nameColumn = window.appState.columns.find(col => 
+                        normalizeColumnName(col).includes('name') || 
+                        normalizeColumnName(col).includes('employee')
+                    );
+
+                    const availabilityColumn = window.appState.columns.find(col => 
+                        normalizeColumnName(col).includes('availability')
+                    );
+
+                    const available = window.appState.dataset.filter(emp => 
+                        availabilityColumn && normalizeColumnName(emp[availabilityColumn]).includes('available')
+                    );
+
+                    if (available.length > 0 && nameColumn) {
+                        const recommended = available[0];
+                        return `Based on current availability and skill analysis, I recommend assigning this task to ${recommended[nameColumn]}. They are available and have the right skill set for optimal task completion.`;
+                    }
+                }
+                return "For optimal task assignment, I analyze employee skills, experience, current workload, and availability. Upload an employee dataset to get specific recommendations.";
+            }
+
+            // Delay question
+            if (lowerQuestion.includes('delay') || lowerQuestion.includes('late')) {
+                return "Task delays can occur due to dependency bottlenecks, resource constraints, or unexpected technical challenges. The AI Decision Engine continuously monitors for delays and can automatically reassign tasks or adjust workflows to maintain project timelines.";
+            }
+
+            // Default responses
+            const defaultResponses = [
+                "I'm here to help you with project management and team optimization. What would you like to know?",
+                "I can assist with workflow analysis, task assignment recommendations, and team performance insights. How can I help?",
+                "As your AI assistant, I have access to your project data and can provide intelligent recommendations. What information do you need?"
+            ];
+
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+        }
+
+        // Decision Engine
+        let decisionCount = 0;
+
+        function triggerDecision() {
+            decisionCount++;
+            
+            const decisions = [
+                {
+                    type: 'problem',
+                    title: 'Task #147 Delayed',
+                    description: 'Backend API development is 2 days behind schedule due to unexpected complexity.',
+                    solution: 'Reassigned task to senior developer Alex. Added 1 additional resource. Adjusted timeline by 3 days.',
+                    confidence: 92
+                },
+                {
+                    type: 'solution',
+                    title: 'Workflow Optimized',
+                    description: 'Detected inefficient task sequencing in frontend module.',
+                    solution: 'Reorganized task dependencies. Parallelized 3 independent tasks. Expected 18% time reduction.',
+                    confidence: 87
+                },
+                {
+                    type: 'problem',
+                    title: 'Resource Overload Detected',
+                    description: 'Employee Sarah has 150% workload capacity this week.',
+                    solution: 'Redistributed 2 low-priority tasks to available team members. Balanced workload to 95%.',
+                    confidence: 95
+                },
+                {
+                    type: 'solution',
+                    title: 'Skill Match Optimization',
+                    description: 'Task #89 requires Python expertise. Current assignee has limited experience.',
+                    solution: 'Reassigned to Python specialist John. Estimated completion time reduced by 40%.',
+                    confidence: 89
+                }
+            ];
+
+            const decision = decisions[decisionCount % decisions.length];
+            displayDecision(decision);
+            
+            showNotification('⚡ New autonomous decision made');
+        }
+
+        function displayDecision(decision) {
+            const timeline = document.getElementById('decision-timeline');
+            
+            const decisionCard = document.createElement('div');
+            decisionCard.className = 'decision-card';
+            decisionCard.innerHTML = `
+                <span class="decision-type ${decision.type}">${decision.type.toUpperCase()}</span>
+                <h3 style="margin-bottom: 0.5rem;">${decision.title}</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">${decision.description}</p>
+                <div style="background: var(--glass-bg); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <strong style="color: var(--primary-blue);">AI Solution:</strong><br>
+                    ${decision.solution}
+                </div>
+                <div>
+                    <strong>Confidence Score:</strong>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: ${decision.confidence}%;"></div>
+                    </div>
+                    <span style="color: var(--text-secondary); font-size: 0.9rem;">${decision.confidence}%</span>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 1rem;">
+                    ${new Date().toLocaleString()}
+                </p>
+            `;
+
+            timeline.insertBefore(decisionCard, timeline.firstChild);
+        }
+
+        // Initialize with some decisions
+        setTimeout(() => {
+            triggerDecision();
+        }, 1000);
+
+        setTimeout(() => {
+            triggerDecision();
+        }, 2000);
+
+        // Notifications
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 4000);
+        }
+
+        // Demo trigger
+        function triggerDemo() {
+            showNotification('🎬 Demo mode activated!');
+            navigateToPage('dashboard');
+            
+            setTimeout(() => {
+                navigateToPage('project');
+                analyzeProject();
+            }, 3000);
+        }
+
+        // Initialize
+        console.log('%c⚡ Autonomous AI Task Management System v1.0', 'color: #00d4ff; font-size: 20px; font-weight: bold;');
+        console.log('%cSystem Status: Online', 'color: #00ff88;');
+        console.log('%cAI Modules: Initialized', 'color: #00ff88;');
+        console.log('%cAutonomous Operations: Active', 'color: #00ff88;');
+    </script>
+</body>
+</html>
